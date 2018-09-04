@@ -69,7 +69,7 @@ Requirements
 Paperclip now requires Ruby version **>= 2.0.0** and Rails version **3.2, >= 4.1** (Only if you're going to use Paperclip with Ruby on Rails.)
 
 If you're still on Ruby 1.8.7 or Ruby on Rails 2.3.x, you can still use Paperclip 2.7.x with your project. Also, everything in this README might not apply to your version of Paperclip, and you should read [the README for version 2.7](http://rubydoc.info/gems/paperclip/2.7.0) instead.
-
+ 
 ### Image Processor
 
 [ImageMagick](http://www.imagemagick.org) must be installed and Paperclip must have access to it. To ensure
