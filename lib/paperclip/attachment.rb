@@ -22,6 +22,7 @@ module Paperclip
         :only_process          => [],
         :path                  => ":rails_root/public:url",
         :preserve_files        => false,
+        :preserve_dir_tree     => false,
         :processors            => [:thumbnail],
         :source_file_options   => {},
         :storage               => :filesystem,
