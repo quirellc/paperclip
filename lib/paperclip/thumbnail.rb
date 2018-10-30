@@ -32,7 +32,7 @@ module Paperclip
       string_geometry_parser = options.fetch(:string_geometry_parser, Geometry)
       @crop                = geometry[-1,1] == '#'
       @target_geometry     = string_geometry_parser.parse(geometry)
-      @current_geometry    = Geometry.new(0, 0)
+      @current_geometry    = options.fetch(:file_geometry_parser, Geometry).from_file(@file)
       @source_file_options = options[:source_file_options]
       @convert_options     = options[:convert_options]
       @whiny               = options.fetch(:whiny, true)
