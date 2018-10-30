@@ -42,6 +42,7 @@ module Paperclip
         @current_geometry.auto_orient
       end
 
+      debugger
       if @current_geometry.respond_to?(:zero?) && @current_geometry.zero?
         default_geometry = options[:default_geometry]
         default_geometry = default_geometry.call(attachment) if default_geometry.respond_to?(:call)
