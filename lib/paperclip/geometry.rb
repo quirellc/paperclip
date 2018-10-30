@@ -131,6 +131,10 @@ module Paperclip
       end
     end
 
+    def zero?
+      width.zero? || height.zero?
+    end
+
     private
 
     def scaling dst, ratio

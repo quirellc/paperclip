@@ -31,7 +31,7 @@ module Paperclip
       geometry             = options[:geometry].to_s
       @crop                = geometry[-1,1] == '#'
       @target_geometry     = options.fetch(:string_geometry_parser, Geometry).parse(geometry)
-      @current_geometry    = options.fetch(:file_geometry_parser, Geometry).from_file(@file)
+      @current_geometry    = Geometry.new(0, 0)
       @source_file_options = options[:source_file_options]
       @convert_options     = options[:convert_options]
       @whiny               = options.fetch(:whiny, true)
@@ -40,6 +40,12 @@ module Paperclip
       @auto_orient         = options.fetch(:auto_orient, true)
       if @auto_orient && @current_geometry.respond_to?(:auto_orient)
         @current_geometry.auto_orient
+      end
+
+      if @current_geometry.respond_to?(:zero?) && @current_geometry.zero?
+        default_geometry = options[:default_geometry]
+        default_geometry = default_geometry.call(attachment) if default_geometry.respond_to?(:call)
+        @current_geometry = options.fetch(:file_geometry_parser, Geometry).parse(default_geometry) if default_geometry.is_a?(String)
       end
 
       @source_file_options = @source_file_options.split(/\s+/) if @source_file_options.respond_to?(:split)
