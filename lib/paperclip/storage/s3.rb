@@ -323,7 +323,8 @@ module Paperclip
             acl = acl.call(self, style) if acl.respond_to?(:call)
             write_options = {
               :content_type => file.content_type,
-              :acl => acl
+              :acl => acl,
+              body: file
             }
 
             # add storage class for this style if defined
@@ -344,7 +345,7 @@ module Paperclip
             write_options[:metadata] = @s3_metadata unless @s3_metadata.empty?
             write_options.merge!(@s3_headers)
 
-            s3_object(style).write(file, write_options)
+            s3_object(style).put(write_options)
           rescue Aws::S3::Errors::NoSuchBucket
             create_bucket
             retry
@@ -385,9 +386,8 @@ module Paperclip
       def copy_to_local_file(style, local_dest_path)
         log("copying #{path(style)} to local file #{local_dest_path}")
         ::File.open(local_dest_path, 'wb') do |local_file|
-          s3_object(style).read do |chunk|
-            local_file.write(chunk)
-          end
+          resp = s3_object(style).get
+          resp.body.each_chunk { |chunk| local_file.write(chunk) }
         end
       rescue Aws::Errors::ServiceError => e
         warn("#{e} - cannot copy #{path(style)} to local file #{local_dest_path}")
