@@ -113,26 +113,14 @@ module Paperclip
     module S3
       def self.extended base
         begin
-          require 'aws-sdk'
+          require 'aws-sdk-s3'
         rescue LoadError => e
-          e.message << " (You may need to install the aws-sdk gem)"
+          e.message << " (You may need to install the aws-sdk-s3 gem)"
           raise e
-        end unless defined?(AWS::Core)
+        end unless defined?(Aws::S3)
 
         # Overriding log formatter to make sure it return a UTF-8 string
-        if defined?(AWS::Core::LogFormatter)
-          AWS::Core::LogFormatter.class_eval do
-            def summarize_hash(hash)
-              hash.map { |key, value| ":#{key}=>#{summarize_value(value)}".force_encoding('UTF-8') }.sort.join(',')
-            end
-          end
-        elsif defined?(AWS::Core::ClientLogging)
-          AWS::Core::ClientLogging.class_eval do
-            def sanitize_hash(hash)
-              hash.map { |key, value| "#{sanitize_value(key)}=>#{sanitize_value(value)}".force_encoding('UTF-8') }.sort.join(',')
-            end
-          end
-        end
+        Aws.config.update(logger: Paperclip::Logger)
 
         base.instance_eval do
           @s3_options     = @options[:s3_options]     || {}
@@ -244,15 +232,15 @@ module Paperclip
 
       def obtain_s3_instance_for(options)
         instances = (Thread.current[:paperclip_s3_instances] ||= {})
-        instances[options] ||= AWS::S3.new(options)
+        instances[options] ||= Aws::S3::Client.new(options)
       end
 
       def s3_bucket
-        @s3_bucket ||= s3_interface.buckets[bucket_name]
+        @s3_bucket ||= Aws::S3::Bucket.new(bucket_name)
       end
 
       def s3_object style_name = default_style
-        s3_bucket.objects[path(style_name).sub(%r{\A/},'')]
+        Aws::S3::Object.new(s3_bucket, path(style_name).sub(%r{\A/},''))
       end
 
       def using_http_proxy?
@@ -297,7 +285,7 @@ module Paperclip
         else
           false
         end
-      rescue AWS::Errors::Base => e
+      rescue Aws::Errors::ServiceError => e
         false
       end
 
@@ -323,7 +311,7 @@ module Paperclip
       end
 
       def create_bucket
-        s3_interface.buckets.create(bucket_name)
+        s3_interface.create_bucket(bucket: bucket_name)
       end
 
       def flush_writes #:nodoc:
@@ -357,14 +345,18 @@ module Paperclip
             write_options.merge!(@s3_headers)
 
             s3_object(style).write(file, write_options)
-          rescue AWS::S3::Errors::NoSuchBucket
+          rescue Aws::S3::Errors::NoSuchBucket
             create_bucket
             retry
-          rescue AWS::S3::Errors::SlowDown
-            retries += 1
-            if retries <= 5
-              sleep((2 ** retries) * 0.5)
-              retry
+          rescue Aws::Errors::ServiceError => se
+            if se.code == 'SlowDown'
+              retries += 1
+              if retries <= 5
+                sleep((2 ** retries) * 0.5)
+                retry
+              else
+                raise
+              end
             else
               raise
             end
@@ -383,7 +375,7 @@ module Paperclip
           begin
             log("deleting #{path}")
             s3_bucket.objects[path.sub(%r{\A/},'')].delete
-          rescue AWS::Errors::Base => e
+          rescue Aws::Errors::ServiceError => e
             # Ignore this.
           end
         end
@@ -397,7 +389,7 @@ module Paperclip
             local_file.write(chunk)
           end
         end
-      rescue AWS::Errors::Base => e
+      rescue Aws::Errors::ServiceError => e
         warn("#{e} - cannot copy #{path(style)} to local file #{local_dest_path}")
         false
       end
