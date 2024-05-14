@@ -120,7 +120,7 @@ module Paperclip
         end unless defined?(Aws::S3)
 
         # Overriding log formatter to make sure it return a UTF-8 string
-        Aws.config.update(logger: Paperclip::Logger)
+        Aws.config.update(logger: Paperclip.logger)
 
         base.instance_eval do
           @s3_options     = @options[:s3_options]     || {}
