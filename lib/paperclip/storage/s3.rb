@@ -388,7 +388,9 @@ module Paperclip
         log("copying #{path(style)} to local file #{local_dest_path}")
         ::File.open(local_dest_path, 'wb') do |local_file|
           resp = s3_object(style).get
-          resp.body.each_chunk { |chunk| local_file.write(chunk) }
+          while chunk = resp.body.read(1024)
+            local_file.write(chunk)
+          end
         end
       rescue Aws::Errors::ServiceError => e
         warn("#{e} - cannot copy #{path(style)} to local file #{local_dest_path}")
