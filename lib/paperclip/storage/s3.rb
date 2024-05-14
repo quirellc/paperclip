@@ -240,7 +240,7 @@ module Paperclip
       end
 
       def s3_object style_name = default_style
-        Aws::S3::Object.new(s3_bucket, path(style_name).sub(%r{\A/},''))
+        Aws::S3::Object.new(bucket_name, path(style_name).sub(%r{\A/},''))
       end
 
       def using_http_proxy?
@@ -375,7 +375,8 @@ module Paperclip
         @queued_for_delete.each do |path|
           begin
             log("deleting #{path}")
-            s3_bucket.objects[path.sub(%r{\A/},'')].delete
+            obj = Aws::S3::Object.new(bucket_name, path.sub(%r{\A/},''))
+            obj.delete
           rescue Aws::Errors::ServiceError => e
             # Ignore this.
           end
