@@ -20,20 +20,20 @@ Gem::Specification.new do |s|
   s.requirements << "ImageMagick"
   s.required_ruby_version = ">= 2.7.8"
 
-  s.add_dependency('activemodel', '~> 6.1')
-  s.add_dependency('activesupport', '~> 6.1')
+  s.add_dependency('activemodel', '~> 7.0.8')
+  s.add_dependency('activesupport', '~> 7.0.8')
   s.add_dependency('cocaine', '~> 0.5.5')
   s.add_dependency('mime-types')
   s.add_dependency('mimemagic', '~> 0.3.0', '< 0.3.10')
 
-  s.add_development_dependency('activerecord', '~> 6.1.0')
+  s.add_development_dependency('activerecord', '~> 7.0.8')
   s.add_development_dependency('shoulda')
   s.add_development_dependency('rspec', '~> 3.0')
   s.add_development_dependency('appraisal')
   s.add_development_dependency('mocha')
   s.add_development_dependency('bourne')
   s.add_development_dependency('cucumber', '~> 1.3.18')
-  s.add_development_dependency('aruba', '~> 0.9.0')
+  s.add_development_dependency('aruba')
   s.add_development_dependency('nokogiri')
   # Ruby version < 1.9.3 can't install capybara > 2.0.3.
   s.add_development_dependency('capybara')
@@ -43,8 +43,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency('launchy')
   s.add_development_dependency('rake')
   s.add_development_dependency('fakeweb')
-  s.add_development_dependency('railties')
-  s.add_development_dependency('actionmailer', '~> 6.1')
+  s.add_development_dependency('railties', '~> 7.0.8')
+  s.add_development_dependency('actionmailer', '~> 7.0.8')
   s.add_development_dependency('generator_spec')
   s.add_development_dependency('timecop')
+  s.add_development_dependency('aws-sdk-s3')
 end
