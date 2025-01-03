@@ -20,13 +20,13 @@ Gem::Specification.new do |s|
   s.requirements << "ImageMagick"
   s.required_ruby_version = ">= 2.7.8"
 
-  s.add_dependency('activemodel', '~> 7.0.8')
-  s.add_dependency('activesupport', '~> 7.0.8')
+  s.add_dependency('activemodel', '~> 7.1.5')
+  s.add_dependency('activesupport', '~> 7.1.5')
   s.add_dependency('cocaine', '~> 0.5.5')
   s.add_dependency('mime-types')
   s.add_dependency('mimemagic', '~> 0.3.0', '< 0.3.10')
 
-  s.add_development_dependency('activerecord', '~> 7.0.8')
+  s.add_development_dependency('activerecord', '~> 7.1.5')
   s.add_development_dependency('shoulda')
   s.add_development_dependency('rspec', '~> 3.0')
   s.add_development_dependency('appraisal')
@@ -43,8 +43,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency('launchy')
   s.add_development_dependency('rake')
   s.add_development_dependency('fakeweb')
-  s.add_development_dependency('railties', '~> 7.0.8')
-  s.add_development_dependency('actionmailer', '~> 7.0.8')
+  s.add_development_dependency('railties', '~> 7.1.5')
+  s.add_development_dependency('actionmailer', '~> 7.1.5')
   s.add_development_dependency('generator_spec')
   s.add_development_dependency('timecop')
   s.add_development_dependency('aws-sdk-s3')
